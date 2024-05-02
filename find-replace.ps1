@@ -1,21 +1,35 @@
-#This script will run whereever it is placed and will search for text in any file in any directory in the location and find/replace
+# Find and Replace text
+# Instructions:
+# 1. Add this file to the folder where you want to run it
+# 3. Make changes to the "Edit Here" section below
+# 2. Right click the file and select "Run with PowerShell"
+# **Note** It is always a good idea to backup files before running this script.
 
-# Get the directory path of the currently executing script
+# Edit Here
+# **Note** Searches are not case sensitive
+$searchText = "change this text"
+$replaceText = "This text was changed"
+$fileTypes = ""
+# ^^ Leave $fileTypes above empty if you want to search all, otherwise specify file types
+#    ex. Search specific file types: $fileTypes = "*.html", "*.js", "*.docx", "*.css"
+#    ex. Search all file types: $fileTypes = ""
+
+# Navigate to current location
 $scriptPath = $PSScriptRoot
-
-# Navigate to the script directory
 Set-Location -Path $scriptPath
 
-# How To Edit
-# 1. Make sure the filetypes you want to search are included
-#    ex...  -Include "*.php", "*.css", "*.file-type", etc...  |
-# 2. Update find/replace text
-#    ex... -replace "Text to search", "Replace with this"
-
-Get-ChildItem -Recurse -Include "*.php" | ForEach-Object {
-    $content = Get-Content $_.FullName
-    $modifiedContent = $content -replace "@dos.fl.gov", "@davis-is-cool"
-    $modifiedContent | Set-Content $_.FullName
+if ($fileTypes -and $fileTypes.Length -gt 0) {
+    Get-ChildItem -Recurse -Include $fileTypes | ForEach-Object {
+        $content = Get-Content $_.FullName
+        $modifiedContent = $content -replace $searchText, $replaceText
+        $modifiedContent | Set-Content $_.FullName
+    }
 }
-
+else {
+    Get-ChildItem -Recurse -Exclude "*.ps1" | ForEach-Object {
+        $content = Get-Content $_.FullName
+        $modifiedContent = $content -replace $searchText, $replaceText
+        $modifiedContent | Set-Content $_.FullName
+    }
+}
 
